@@ -1,33 +1,36 @@
 plugins {
-  //inlude the nodeJS plugin to execute nodejs and npm tasks
-  id "com.moowork.node" version "1.2.0"
+    // inlude the nodeJS plugin to execute nodejs and npm tasks
+    id "com.moowork.node" version "1.2.0"
 }
 
+// 아래 블록은 필요한 node, npm을 다운로드하기 위해 상기 plugin이 실행하는 것이다.
 node {
-	download = true
+    download = true
 }
 
-//declare a build task
+// declare a build task.
+// 보통 CI Server가 build를 위해 실행하는 것이 바로 이 Task.
 task build
 
-//declare a task to create a zip of the app
+// declare a task to create a zip of the app
 task zip(type: Zip) {
-	from ('.') {
-		include "*"
-		include "bin/**"
-		include "data/**"
-		include "node_modules/**"
-		include "public/**"
-		include "routes/**"
-		include "views/**"
-	}
-	destinationDir(file("dist"))
-	baseName "trainSchedule"
+    from ('.') {
+        include "*"
+        include "bin/**"
+        include "data/**"
+        include "node_modules/**"
+        include "public/**"
+        include "routes/**"
+        include "views/**"
+    }
+    destinationDir(file("dist"))
+    baseName "trainSchedule"
 }
 
-//declare task dependencies
+// declare task dependencies
 build.dependsOn zip
 zip.dependsOn npm_build
+build.dependsOn npm_build
+npm_build.dependsOn npmInstall
 npm_build.dependsOn npm_test
 npm_test.dependsOn npmInstall
-npm_build.dependsOn npmInstall
